@@ -102,7 +102,7 @@ The project includes an interactive application developed using Gradio.
 **Step 1: Clone the repository**
 
 ```bash
-git clone https://github.com/Yogesh23082007/MNIST-Digit-Recognition.git
+git clone https://github.com/Yogesh23082007/MNIST-DigitRecognition.git
 ```
 
 **Step 2: Open the project folder**
