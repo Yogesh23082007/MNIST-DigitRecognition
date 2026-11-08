@@ -1,6 +1,6 @@
+flask
+flask-cors
+gunicorn
 tensorflow
 numpy
-matplotlib
-scikit-learn
-gradio
 pillow
