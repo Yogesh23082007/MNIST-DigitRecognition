@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="DigitAI - Interactive handwritten digit recognition powered by a TensorFlow neural network trained on the MNIST dataset.">
+
+    <title>DigitAI | AI Handwritten Digit Recognition</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Background effects -->
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+    <div class="grid-background"></div>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <a href="#home" class="brand">
+            <span class="brand-icon">✦</span>
+            <span>Digit<span class="brand-highlight">AI</span></span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#recognizer">Recognizer</a>
+            <a href="#technology">Technology</a>
+        </nav>
+
+        <a href="https://github.com/Yogesh23082007/MNIST-DigitRecognition"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="github-button">
+            <span>GitHub</span>
+            <span>↗</span>
+        </a>
+    </header>
+
+    <main>
+
+        <!-- Hero section -->
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <div class="announcement">
+                    <span class="status-dot"></span>
+                    MACHINE LEARNING · MNIST PROJECT
+                </div>
+
+                <h1>
+                    Every Digit Has a
+                    <span class="gradient-text">Story.</span>
+                    <br>
+                    Let AI Read It.
+                </h1>
+
+                <p class="hero-description">
+                    Experience the power of artificial intelligence.
+                    Draw a handwritten digit and watch our neural network
+                    recognize it in real time.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#recognizer" class="primary-button">
+                        Try Digit Recognition
+                        <span>→</span>
+                    </a>
+
+                    <a href="#technology" class="text-button">
+                        Explore the technology
+                        <span>↓</span>
+                    </a>
+                </div>
+
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <span class="trust-icon">✦</span>
+                        TensorFlow
+                    </div>
+
+                    <div class="trust-item">
+                        <span class="trust-icon">◈</span>
+                        Neural Networks
+                    </div>
+
+                    <div class="trust-item">
+                        <span class="trust-icon">◎</span>
+                        MNIST Dataset
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hero visual -->
+            <div class="hero-visual">
+
+                <div class="visual-orbit orbit-one"></div>
+                <div class="visual-orbit orbit-two"></div>
+
+                <div class="digit-display">
+                    <span class="digit-label">AI IS LEARNING</span>
+
+                    <div class="hero-digit">8</div>
+
+                    <div class="digit-caption">
+                        <span class="live-dot"></span>
+                        HANDWRITTEN DIGIT
+                    </div>
+                </div>
+
+                <div class="floating-card card-top">
+                    <span class="floating-icon">✧</span>
+                    <div>
+                        <strong>Deep Learning</strong>
+                        <small>Neural network model</small>
+                    </div>
+                </div>
+
+                <div class="floating-card card-bottom">
+                    <span class="floating-icon">◈</span>
+                    <div>
+                        <strong>10 Classes</strong>
+                        <small>Digits from 0 to 9</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <span class="stat-number">60K</span>
+                <span class="stat-label">Training Images</span>
+            </div>
+
+            <div class="stat-divider"></div>
+
+            <div class="stat-card">
+                <span class="stat-number">10K</span>
+                <span class="stat-label">Testing Images</span>
+            </div>
+
+            <div class="stat-divider"></div>
+
+            <div class="stat-card">
+                <span class="stat-number">28×28</span>
+                <span class="stat-label">Image Resolution</span>
+            </div>
+
+            <div class="stat-divider"></div>
+
+            <div class="stat-card">
+                <span class="stat-number">10</span>
+                <span class="stat-label">Digit Classes</span>
+            </div>
+        </section>
+
+        <!-- Recognizer -->
+        <section class="recognizer-section" id="recognizer">
+
+            <div class="section-heading">
+                <div class="section-tag">
+                    <span></span>
+                    INTERACTIVE EXPERIENCE
+                </div>
+
+                <h2>
+                    Your Canvas.
+                    <span class="gradient-text">Our Intelligence.</span>
+                </h2>
+
+                <p>
+                    Draw any number from 0 to 9.
+                    Let our trained machine learning model do the rest.
+                </p>
+            </div>
+
+            <div class="recognizer-layout">
+
+                <!-- Drawing panel -->
+                <div class="glass-card drawing-card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span class="step-label">STEP 01</span>
+                            <h3>Draw Your Digit</h3>
+                            <p>Use your mouse or touchscreen.</p>
+                        </div>
+
+                        <span class="canvas-badge">0 — 9</span>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="drawingCanvas"
+                                width="280"
+                                height="280">
+                        </canvas>
+
+                        <div class="canvas-placeholder" id="canvasPlaceholder">
+                            <span>✎</span>
+                            <p>Start drawing here</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-controls">
+
+                        <button id="clearBtn" class="outline-button" type="button">
+                            <span>↺</span>
+                            Clear
+                        </button>
+
+                        <button id="predictBtn" class="primary-button predict-button" type="button">
+                            Predict Digit
+                            <span>→</span>
+                        </button>
+
+                    </div>
+
+                    <p class="drawing-hint">
+                        <span>✦</span>
+                        Tip: Draw a large digit in the center of the canvas.
+                    </p>
+
+                    <div id="status" class="status-message" aria-live="polite">
+                        <span class="status-dot"></span>
+                        Ready to recognize your digit
+                    </div>
+
+                </div>
+
+                <!-- Prediction panel -->
+                <div class="glass-card prediction-card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span class="step-label">STEP 02</span>
+                            <h3>AI Prediction</h3>
+                            <p>Your model's prediction will appear here.</p>
+                        </div>
+
+                        <span class="ai-badge">AI MODEL</span>
+                    </div>
+
+                    <div id="result" class="result-container">
+
+                        <div class="empty-result">
+                            <div class="empty-icon">?</div>
+                            <h4>Waiting for input</h4>
+                            <p>Draw a digit and click Predict Digit to see the result.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="probability-section">
+                        <div class="probability-heading">
+                            <h4>Digit Probabilities</h4>
+                            <span>0–9</span>
+                        </div>
+
+                        <div id="probabilityBars" class="probability-bars">
+                            <p class="probability-empty">
+                                Prediction probabilities will appear here.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Technology -->
+        <section class="technology-section" id="technology">
+
+            <div class="section-heading">
+                <div class="section-tag">
+                    <span></span>
+                    BEHIND THE INTELLIGENCE
+                </div>
+
+                <h2>Built with <span class="gradient-text">AI.</span></h2>
+
+                <p>
+                    A neural network trained to understand handwritten digits
+                    through image processing and deep learning.
+                </p>
+            </div>
+
+            <div class="technology-grid">
+
+                <div class="technology-card">
+                    <div class="tech-icon">01</div>
+                    <h3>MNIST Dataset</h3>
+                    <p>
+                        A collection of handwritten digit images used to
+                        train and evaluate the recognition model.
+                    </p>
+                </div>
+
+                <div class="technology-card">
+                    <div class="tech-icon">02</div>
+                    <h3>Neural Network</h3>
+                    <p>
+                        A TensorFlow model with a flattened input layer,
+                        128 ReLU neurons and a 10-class Softmax output.
+                    </p>
+                </div>
+
+                <div class="technology-card">
+                    <div class="tech-icon">03</div>
+                    <h3>Smart Prediction</h3>
+                    <p>
+                        Processes a 28 × 28 grayscale image and estimates
+                        probabilities for digits from 0 to 9.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="#home" class="brand">
+            <span class="brand-icon">✦</span>
+            <span>Digit<span class="brand-highlight">AI</span></span>
+        </a>
+
+        <p>Designed & Developed by Yogesh Lingutla</p>
+
+        <a href="https://github.com/Yogesh23082007/MNIST-DigitRecognition"
+           target="_blank"
+           rel="noopener noreferrer">
+            View Project on GitHub ↗
+        </a>
+    </footer>
+
+    <script src="script.js?v=1"></script>
+
+</body>
+</html>
