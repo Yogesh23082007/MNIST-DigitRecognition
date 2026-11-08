@@ -9,8 +9,7 @@ const statusText = document.getElementById("status");
 const result = document.getElementById("result");
 const probabilityBars = document.getElementById("probabilityBars");
 
-// Replace this URL after deploying your Flask backend on Render.
-const API_URL = "YOUR_RENDER_BACKEND_URL/predict";
+const API_URL = "https://mnist-digitrecognition.onrender.com/predict";
 
 let isDrawing = false;
 let hasDrawing = false;
