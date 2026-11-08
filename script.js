@@ -1,170 +1,190 @@
 
-const canvas = document.getElementById("drawingCanvas");
-const ctx = canvas.getContext("2d");
+document.addEventListener("DOMContentLoaded", () => {
 
-const clearBtn = document.getElementById("clearBtn");
-const predictBtn = document.getElementById("predictBtn");
-const placeholder = document.querySelector(".canvas-placeholder");
-const statusText = document.getElementById("status");
-const result = document.getElementById("result");
-const probabilityBars = document.getElementById("probabilityBars");
+    const canvas = document.getElementById("drawingCanvas");
+    const clearBtn = document.getElementById("clearBtn");
+    const predictBtn = document.getElementById("predictBtn");
+    const placeholder = document.querySelector(".canvas-placeholder");
+    const statusText = document.getElementById("status");
+    const result = document.getElementById("result");
+    const probabilityBars = document.getElementById("probabilityBars");
 
-const API_URL = "https://mnist-digitrecognition.onrender.com/predict";
+    const API_URL = "https://mnist-digitrecognition.onrender.com/predict";
 
-let isDrawing = false;
-let hasDrawing = false;
+    if (!canvas || !clearBtn || !predictBtn ||
+        !statusText || !result || !probabilityBars) {
+        console.error("Required HTML elements are missing.");
+        return;
+    }
 
-// Canvas settings
-ctx.fillStyle = "#000000";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext("2d");
 
-ctx.strokeStyle = "#ffffff";
-ctx.lineWidth = 18;
-ctx.lineCap = "round";
-ctx.lineJoin = "round";
+    let isDrawing = false;
+    let hasDrawing = false;
 
-// Get accurate mouse/touch position
-function getPosition(event) {
-    const rect = canvas.getBoundingClientRect();
+    // Initialize canvas
+    function resetCanvas() {
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
-    return {
-        x: (event.clientX - rect.left) * canvas.width / rect.width,
-        y: (event.clientY - rect.top) * canvas.height / rect.height
-    };
-}
+    resetCanvas();
 
-// Start drawing
-canvas.addEventListener("pointerdown", (event) => {
-    event.preventDefault();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 18;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
-    isDrawing = true;
-    hasDrawing = true;
-    canvas.setPointerCapture(event.pointerId);
+    // Get mouse or touch position
+    function getPosition(event) {
+        const rect = canvas.getBoundingClientRect();
 
-    placeholder.style.display = "none";
+        return {
+            x: (event.clientX - rect.left) *
+                canvas.width / rect.width,
+            y: (event.clientY - rect.top) *
+                canvas.height / rect.height
+        };
+    }
 
-    const position = getPosition(event);
+    // Start drawing
+    canvas.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
 
-    ctx.beginPath();
-    ctx.moveTo(position.x, position.y);
-    ctx.lineTo(position.x, position.y);
-    ctx.stroke();
+        isDrawing = true;
+        hasDrawing = true;
 
-    statusText.textContent = "Digit drawn. Ready to predict.";
-});
+        canvas.setPointerCapture(event.pointerId);
 
-// Draw while moving
-canvas.addEventListener("pointermove", (event) => {
-    if (!isDrawing) return;
+        if (placeholder) {
+            placeholder.style.display = "none";
+        }
 
-    event.preventDefault();
+        const pos = getPosition(event);
 
-    const position = getPosition(event);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.lineTo(pos.x + 0.1, pos.y + 0.1);
+        ctx.stroke();
 
-    ctx.lineTo(position.x, position.y);
-    ctx.stroke();
-});
-
-// Stop drawing
-function stopDrawing() {
-    isDrawing = false;
-    ctx.beginPath();
-}
-
-canvas.addEventListener("pointerup", stopDrawing);
-canvas.addEventListener("pointercancel", stopDrawing);
-
-// Clear canvas
-clearBtn.addEventListener("click", () => {
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    hasDrawing = false;
-    placeholder.style.display = "flex";
-
-    result.textContent = "—";
-    probabilityBars.innerHTML = "";
-
-    statusText.textContent = "Canvas cleared. Draw a digit.";
-});
-
-// Display prediction probabilities
-function displayProbabilities(probabilities) {
-    probabilityBars.innerHTML = "";
-
-    probabilities.forEach((probability, digit) => {
-        const percentage = (probability * 100).toFixed(2);
-
-        const row = document.createElement("div");
-        row.className = "probability-row";
-
-        row.innerHTML = `
-            <div class="probability-label">
-                <span>Digit ${digit}</span>
-                <span>${percentage}%</span>
-            </div>
-            <div class="probability-track">
-                <div class="probability-fill"
-                     style="width: ${percentage}%"></div>
-            </div>
-        `;
-
-        probabilityBars.appendChild(row);
+        statusText.textContent = "Digit drawn. Ready to predict.";
     });
-}
 
-// Predict digit
-predictBtn.addEventListener("click", async () => {
-    if (!hasDrawing) {
-        statusText.textContent = "Please draw a digit first.";
-        return;
+    // Continue drawing
+    canvas.addEventListener("pointermove", (event) => {
+        if (!isDrawing) return;
+
+        event.preventDefault();
+
+        const pos = getPosition(event);
+
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    });
+
+    // Stop drawing
+    function stopDrawing() {
+        isDrawing = false;
+        ctx.beginPath();
     }
 
-    if (API_URL.startsWith("YOUR_RENDER")) {
-        statusText.textContent =
-            "Backend connection will be added in the next step.";
-        return;
-    }
+    canvas.addEventListener("pointerup", stopDrawing);
+    canvas.addEventListener("pointercancel", stopDrawing);
+    canvas.addEventListener("lostpointercapture", stopDrawing);
 
-    predictBtn.disabled = true;
-    statusText.textContent = "AI is analyzing your digit...";
-    result.textContent = "…";
+    // Clear canvas
+    clearBtn.addEventListener("click", () => {
+        resetCanvas();
 
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                image: canvas.toDataURL("image/png")
-            })
+        hasDrawing = false;
+
+        if (placeholder) {
+            placeholder.style.display = "flex";
+        }
+
+        result.textContent = "—";
+        probabilityBars.innerHTML = "";
+
+        statusText.textContent = "Canvas cleared. Draw a digit.";
+    });
+
+    // Show probability bars
+    function displayProbabilities(probabilities) {
+        probabilityBars.innerHTML = "";
+
+        probabilities.forEach((probability, digit) => {
+            const percentage = (probability * 100).toFixed(2);
+
+            const row = document.createElement("div");
+            row.className = "probability-row";
+
+            row.innerHTML = `
+                <div class="probability-label">
+                    <span>Digit ${digit}</span>
+                    <span>${percentage}%</span>
+                </div>
+                <div class="probability-track">
+                    <div class="probability-fill"
+                         style="width: ${percentage}%"></div>
+                </div>
+            `;
+
+            probabilityBars.appendChild(row);
         });
-
-        if (!response.ok) {
-            throw new Error("Prediction request failed.");
-        }
-
-        const data = await response.json();
-
-        if (!Array.isArray(data.probabilities) ||
-            data.probabilities.length !== 10) {
-            throw new Error("Invalid prediction response.");
-        }
-
-        result.textContent = data.prediction;
-        displayProbabilities(data.probabilities);
-
-        statusText.textContent =
-            `Prediction completed! Confidence: ${(data.confidence * 100).toFixed(2)}%`;
-} catch (error) {
-    console.error("Prediction Error:", error);
-
-    result.textContent = "—";
-    statusText.textContent = "Error: " + error.message;
-
-} finally {
-    predictBtn.disabled = false;
-}
     }
+
+    // Predict digit
+    predictBtn.addEventListener("click", async () => {
+
+        if (!hasDrawing) {
+            statusText.textContent = "Please draw a digit first.";
+            return;
+        }
+
+        predictBtn.disabled = true;
+        statusText.textContent = "AI is analyzing your digit...";
+        result.textContent = "…";
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    image: canvas.toDataURL("image/png")
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Server prediction failed.");
+            }
+
+            if (!Array.isArray(data.probabilities) ||
+                data.probabilities.length !== 10) {
+                throw new Error("Invalid prediction response.");
+            }
+
+            result.textContent = data.prediction;
+
+            displayProbabilities(data.probabilities);
+
+            statusText.textContent =
+                `Prediction completed! Confidence: ${(data.confidence * 100).toFixed(2)}%`;
+
+        } catch (error) {
+            console.error("Prediction Error:", error);
+
+            result.textContent = "—";
+            statusText.textContent = "Error: " + error.message;
+
+        } finally {
+            predictBtn.disabled = false;
+        }
+    });
+
+    console.log("MNIST Digit Recognizer initialized successfully.");
+
 });
