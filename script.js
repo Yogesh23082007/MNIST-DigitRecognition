@@ -157,13 +157,14 @@ predictBtn.addEventListener("click", async () => {
 
         statusText.textContent =
             `Prediction completed! Confidence: ${(data.confidence * 100).toFixed(2)}%`;
+} catch (error) {
+    console.error("Prediction Error:", error);
 
-    } catch (error) {
-        console.error(error);
-        result.textContent = "—";
-        statusText.textContent =
-            "Unable to connect to the prediction server. Please try again.";
-    } finally {
-        predictBtn.disabled = false;
+    result.textContent = "—";
+    statusText.textContent = "Error: " + error.message;
+
+} finally {
+    predictBtn.disabled = false;
+}
     }
 });
