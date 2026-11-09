@@ -2,7 +2,6 @@ import os
 import io
 import base64
 import numpy as np
-import tensorflow as tf
 
 from PIL import Image
 from flask import Flask, request, jsonify
@@ -11,25 +10,23 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 CORS(app, resources={
-    r"/*": {
+    r"/predict": {
         "origins": "https://yogesh23082007.github.io"
     }
 })
 
-@app.after_request
-def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "https://yogesh23082007.github.io"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    return response
+# Load trained model weights
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+weights = np.load(os.path.join(BASE_DIR, "mnist_weights.npz"))
 
-
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "mnist_model.keras")
-model = tf.keras.models.load_model(MODEL_PATH)
+W1 = weights["W1"]
+b1 = weights["b1"]
+W2 = weights["W2"]
+b2 = weights["b2"]
 
 
 def preprocess_image(image_data):
-    image_data = image_data.split(",")[1]
+    image_data = image_data.split(",", 1)[1]
     image_bytes = base64.b64decode(image_data)
 
     image = Image.open(io.BytesIO(image_bytes)).convert("L")
@@ -52,7 +49,25 @@ def preprocess_image(image_data):
 
     image_array = np.array(canvas).astype("float32") / 255.0
 
-    return image_array.reshape(1, 28, 28)
+    return image_array.reshape(1, 784)
+
+
+def predict_digit(image):
+    # Hidden layer: ReLU
+    hidden = np.maximum(0, np.dot(image, W1) + b1)
+
+    # Output layer
+    output = np.dot(hidden, W2) + b2
+
+    # Softmax
+    output = output - np.max(output, axis=1, keepdims=True)
+    exp_output = np.exp(output)
+    probabilities = exp_output / np.sum(exp_output, axis=1, keepdims=True)
+
+    prediction = int(np.argmax(probabilities))
+    confidence = float(probabilities[0][prediction])
+
+    return prediction, confidence, probabilities[0].tolist()
 
 
 @app.route("/")
@@ -64,7 +79,6 @@ def home():
 
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
-
     if request.method == "OPTIONS":
         return "", 204
 
@@ -76,15 +90,14 @@ def predict():
 
         processed_image = preprocess_image(data["image"])
 
-        predictions = model.predict(processed_image, verbose=0)[0]
-
-        predicted_digit = int(np.argmax(predictions))
-        confidence = float(predictions[predicted_digit])
+        prediction, confidence, probabilities = predict_digit(
+            processed_image
+        )
 
         return jsonify({
-            "prediction": predicted_digit,
+            "prediction": prediction,
             "confidence": confidence,
-            "probabilities": predictions.tolist()
+            "probabilities": probabilities
         })
 
     except Exception as error:
